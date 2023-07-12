@@ -45,10 +45,7 @@ class InlineQueryAnswer(SwitchObject):
         }
 
     def _result_json(self, result):
-        if isinstance(result, dict):
-            return result
-        else:
-            return result.to_json()
+        return result if isinstance(result, dict) else result.to_json()
 
     def add_result(self, result: SCT[Any]) -> "InlineQueryAnswer":
         if not self.results:

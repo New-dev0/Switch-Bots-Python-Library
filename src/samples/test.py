@@ -43,7 +43,7 @@ app = BotApp(
 @app.on_command("buttons")
 async def buttons_handler(ctx: BotContext[CommandEvent]):
     m = await ctx.bot.prepare_response_message(ctx.event.message)
-    m.message = f"Please select an option:"
+    m.message = "Please select an option:"
 
     inline_keyboard = [
         [
@@ -96,7 +96,7 @@ async def query_callback_handler(ctx: BotContext[CallbackQueryEvent]):
 
 @app.on_community_update()
 async def community_update_handler(ctx: BotContext[CommunityUpdatedEvent]):
-    print(ctx.event.community_id + " was updated")
+    print(f"{ctx.event.community_id} was updated")
 
 
 app.run()

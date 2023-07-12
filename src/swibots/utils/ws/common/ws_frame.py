@@ -23,10 +23,10 @@ class WsFrame:
 
         for name in self.headers:
             value = self.headers[name]
-            lines.append("" + name + ":" + value)
+            lines.append(f"{name}:{value}")
 
         if self.body is not None and not skipContentLength:
-            lines.append("content-length:" + str(len(self.body)))
+            lines.append(f"content-length:{len(self.body)}")
 
         if self.body is not None:
             lines.append(Byte['LF'] + self.body)

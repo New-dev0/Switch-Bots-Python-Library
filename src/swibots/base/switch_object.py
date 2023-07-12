@@ -18,9 +18,7 @@ class SwitchObject(Generic[T]):
 
     @classmethod
     def build_from_json(cls, data: Optional[JSONDict] = None, app: Optional["swibots.App"] = None) -> Optional[T]:
-        if data is None:
-            return None
-        return cls(app).from_json(data)
+        return None if data is None else cls(app).from_json(data)
 
     @classmethod
     def build_from_json_list(cls, data: Optional[JSONDict], app: Optional["swibots.App"] = None) -> List[T]:

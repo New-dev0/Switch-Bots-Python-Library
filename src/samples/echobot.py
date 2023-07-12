@@ -39,7 +39,7 @@ async def echo_handler(ctx: BotContext[CommandEvent]):
 
 async def buttons_handler(ctx: BotContext[CommandEvent]):
     m = await ctx.bot.prepare_response_message(ctx.event.message)
-    m.message = f"Please select an option:"
+    m.message = "Please select an option:"
 
     inline_keyboard = [
         [

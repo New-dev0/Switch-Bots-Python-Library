@@ -115,10 +115,7 @@ class MessageController:
         return await self.send_message(message, media)
 
     async def reply(self, message: int | Message, reply: Message, media: MediaUploadRequest = None) -> Message:
-        if isinstance(message, Message):
-            id = message.id
-        else:
-            id = message
+        id = message.id if isinstance(message, Message) else message
         reply.replied_to_id = id
         return await self.send_message(reply, media)
 
@@ -135,11 +132,7 @@ class MessageController:
         Raises:
             ``~switch.error.SwitchError``: If the message could not be sent
         """
-        if isinstance(message, Message):
-            id = message.id
-        else:
-            id = message
-
+        id = message.id if isinstance(message, Message) else message
         m = Message(message=text, inline_markup=inline_markup,
                     cached_media=cached_media)
 
@@ -175,10 +168,7 @@ class MessageController:
         Raises:
             ``~switch.error.SwitchError``: If the message could not be edited
         """
-        if isinstance(message, Message):
-            id = message.id
-        else:
-            id = message
+        id = message.id if isinstance(message, Message) else message
         return await self.edit_message(Message(id=id, message=text, inline_markup=inline_markup))
 
     async def delete_message(self, message: int | Message) -> bool:
@@ -193,10 +183,7 @@ class MessageController:
         Raises:
             ``~switch.error.SwitchError``: If the message could not be deleted
         """
-        if isinstance(message, Message):
-            id = message.id
-        else:
-            id = message
+        id = message.id if isinstance(message, Message) else message
         log.debug("Deleting message %s", id)
         response = await self.client.delete(f"{BASE_PATH}/{id}")
         return True
@@ -273,14 +260,8 @@ class MessageController:
         Raises:
             ``~switch.error.SwitchError``: If the message could not be forwarded
         """
-        if isinstance(message, Message):
-            id = message.id
-        else:
-            id = message
-
-        if isinstance(group_channel, Group):
-            group_channel = group_channel.id
-        elif isinstance(group_channel, Channel):
+        id = message.id if isinstance(message, Message) else message
+        if isinstance(group_channel, (Group, Channel)):
             group_channel = group_channel.id
         elif group_channel is not None:
             group_channel = group_channel
@@ -310,10 +291,7 @@ class MessageController:
         Raises:
             ``~switch.error.SwitchError``: If the message could not be retrieved
         """
-        if isinstance(message, Message):
-            id = message.id
-        else:
-            id = message
+        id = message.id if isinstance(message, Message) else message
         log.debug("Getting message %s", id)
         response = await self.client.get(f"{BASE_PATH}/{id}")
         return self.client.build_object(Message, response.data["message"])
@@ -348,11 +326,11 @@ class MessageController:
         if page_limit:
             q.append(f"pageLimit={page_limit}")
         else:
-            q.append(f"pageLimit=0")
+            q.append("pageLimit=0")
         if page_offset:
             q.append(f"pageOffset={page_offset}")
         else:
-            q.append(f"pageOffset=0")
+            q.append("pageOffset=0")
         if community_id:
             q.append(f"communityId={community_id}")
 
@@ -394,11 +372,11 @@ class MessageController:
         if page_limit:
             q.append(f"pageLimit={page_limit}")
         else:
-            q.append(f"pageLimit=0")
+            q.append("pageLimit=0")
         if page_offset:
             q.append(f"pageOffset={page_offset}")
         else:
-            q.append(f"pageOffset=0")
+            q.append("pageOffset=0")
         if community_id:
             q.append(f"communityId={community_id}")
 
@@ -519,10 +497,7 @@ class MessageController:
         Raises:
             ``~switch.error.SwitchError``: If the message could not be flagged
         """
-        if isinstance(message, Message):
-            message_id = message.id
-        else:
-            message_id = message
+        message_id = message.id if isinstance(message, Message) else message
         log.debug("Flagging message %s", message_id)
         response = await self.client.post(f"{BASE_PATH}/flag?messageId={message_id}")
         return True

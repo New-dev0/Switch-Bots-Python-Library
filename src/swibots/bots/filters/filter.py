@@ -55,10 +55,7 @@ class OrFilter(Filter):
     async def __call__(self, ctx: BotContext) -> bool:
         r1 = await self.base(ctx)
         # short circuit
-        if r1:
-            return True
-
-        return await self.other(ctx)
+        return True if r1 else await self.other(ctx)
 
 
 CUSTOM_FILTER_NAME = "CustomFilter"
@@ -80,7 +77,7 @@ all = create(all_filter)
 
 
 async def self_filter(self, ctx: BotContext[MessageEvent]):
-    return bool(
+    return (
         ctx.event.message is not None
         and ctx.event.message.user_id == ctx.event.message.receiver_id
     )
@@ -101,7 +98,10 @@ is_bot = create(bot_filter)
 
 
 async def me_filter(self, ctx: BotContext[MessageEvent]):
-    return bool(ctx.event.message is not None and ctx.event.message.user_id == ctx.user.id)
+    return (
+        ctx.event.message is not None
+        and ctx.event.message.user_id == ctx.user.id
+    )
 
 
 me = create(me_filter)
@@ -109,7 +109,10 @@ me = create(me_filter)
 
 
 async def incoming_filter(self, ctx: BotContext[MessageEvent]):
-    return bool(ctx.event.message is not None and ctx.event.message.receiver_id == ctx.user.id)
+    return (
+        ctx.event.message is not None
+        and ctx.event.message.receiver_id == ctx.user.id
+    )
 
 
 incoming = create(incoming_filter)
@@ -133,12 +136,12 @@ class community(Filter, set):
     async def __call__(self, ctx: BotContext[Event]):
         community_id = self.community_id
         if community_id is None:
-            return bool(ctx.event.community_id is not None)
+            return ctx.event.community_id is not None
         if isinstance(community_id, str):
             community_id = frozenset({community_id})
         else:
             community_id = frozenset(community_id)
-        return bool(ctx.event.community_id in community_id)
+        return ctx.event.community_id in community_id
 
 
 class channel(Filter, set):
@@ -150,12 +153,12 @@ class channel(Filter, set):
     async def __call__(self, ctx: BotContext[Event]):
         channel_id = self.channel_id
         if channel_id is None:
-            return bool(ctx.event.channel_id is not None)
+            return ctx.event.channel_id is not None
         if isinstance(channel_id, str):
             channel_id = frozenset({channel_id})
         else:
             channel_id = frozenset(channel_id)
-        return bool(ctx.event.channel_id in channel_id)
+        return ctx.event.channel_id in channel_id
 
 
 class group(Filter, set):
@@ -165,12 +168,12 @@ class group(Filter, set):
     async def __call__(self, ctx: BotContext[Event]):
         group_id = self.group_id
         if group_id is None:
-            return bool(ctx.event.group_id is not None)
+            return ctx.event.group_id is not None
         if isinstance(group_id, str):
             group_id = frozenset({group_id})
         else:
             group_id = frozenset(group_id)
-        return bool(ctx.event.group_id in group_id)
+        return ctx.event.group_id in group_id
 
 
 class user(Filter, set):
@@ -180,24 +183,20 @@ class user(Filter, set):
     async def __call__(self, ctx: BotContext[Event]):
         user_id = self.user_id
         if user_id is None:
-            return bool(ctx.event.action_by_id is not None)
+            return ctx.event.action_by_id is not None
         if isinstance(user_id, int):
             user_id = frozenset({user_id})
         else:
             user_id = frozenset(user_id)
-        return bool(ctx.event.action_by_id in user_id)
+        return ctx.event.action_by_id in user_id
 
 
 def text(text: Optional[SCT[str]]):
     async def func(self, ctx: BotContext[MessageEvent]):
         text = self.text
         if text is None:
-            return bool(ctx.event.message is not None and ctx.event.message.message is not None)
-        if isinstance(text, str):
-            text = frozenset({text})
-        else:
-            text = frozenset(text)
-
+            return ctx.event.message is not None and ctx.event.message.message is not None
+        text = frozenset({text}) if isinstance(text, str) else frozenset(text)
         if ctx.event.type == EventType.MESSAGE:
             value = ctx.event.message.message
         elif ctx.event.type == EventType.COMMAND:
@@ -208,13 +207,12 @@ def text(text: Optional[SCT[str]]):
         for t in text:
             if t in value:
                 return True
-            else:
-                try:
-                    regexp = re.compile(t)
-                    if regexp.search(value):
-                        return True
-                except re.error:
-                    pass
+            try:
+                regexp = re.compile(t)
+                if regexp.search(value):
+                    return True
+            except re.error:
+                pass
         return False
 
     return create(func, name="TextFilter", text=text)
@@ -227,12 +225,8 @@ def regexp(regexp: Optional[SCT[str]]):
     async def func(self, ctx: BotContext[MessageEvent]):
         regexp = self.regexp
         if regexp is None:
-            return bool(ctx.event.message is not None and ctx.event.message.message is not None)
-        if isinstance(regexp, str):
-            regexp = frozenset({regexp})
-        else:
-            regexp = frozenset(regexp)
-
+            return ctx.event.message is not None and ctx.event.message.message is not None
+        regexp = frozenset({regexp}) if isinstance(regexp, str) else frozenset(regexp)
         if ctx.event.type == EventType.MESSAGE:
             value = ctx.event.message.message
         elif ctx.event.type == EventType.COMMAND:
@@ -263,10 +257,8 @@ async def message_type(types: Optional[SCT[int]]):
     async def func(self, ctx: BotContext[MessageEvent]):
         types = self.types
         if types is None:
-            return bool(ctx.event.message.status is not None)
-        if isinstance(types, int):
-            types = frozenset({types})
-        else:
-            types = frozenset(types)
-        return bool(ctx.event.message.status in types)
+            return ctx.event.message.status is not None
+        types = frozenset({types}) if isinstance(types, int) else frozenset(types)
+        return ctx.event.message.status in types
+
     return create(func, name="MessageType", types=types)

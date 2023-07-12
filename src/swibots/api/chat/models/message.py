@@ -145,7 +145,7 @@ class Message(
         if self.is_document is not None:
             form_data["isDocument"] = self.is_document
         if self.inline_markup is not None:
-            form_data.update(self.inline_markup.to_form_data())
+            form_data |= self.inline_markup.to_form_data()
         return form_data
 
     def to_json(self) -> JSONDict:

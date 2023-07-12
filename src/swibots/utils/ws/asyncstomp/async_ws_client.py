@@ -53,9 +53,9 @@ class AsyncWsClient:
         self.connected = False
         if self._gracefully_disconnect:
             return
-        log.error("Whoops! Lost connection to " + self.url)
+        log.error(f"Whoops! Lost connection to {self.url}")
         await self._clean_up()
-        if self._connectIntents >= self._maxConnectIntents and self._maxConnectIntents > 0:
+        if self._connectIntents >= self._maxConnectIntents > 0:
             log.error("Max connection attempts reached. Aborting.")
             raise SwitchError("Max connection attempts reached. Aborting.")
         await asyncio.sleep(self._connectInterval)
@@ -80,14 +80,14 @@ class AsyncWsClient:
             self.connected = True
             self._connecting = False
             self._connectIntents = 0
-            log.debug("connected to server " + self.url)
+            log.debug(f"connected to server {self.url}")
             self._heartbeatTask = self._loop.create_task(self._start_heartbeat())
             # resubscribe
             for sub in self.subscriptions.values():
                 await self._start_subscription(sub)
 
-            # if self._connectCallback is not None:
-            #     _results.append(await self._send_heartbeat(frame))
+                # if self._connectCallback is not None:
+                #     _results.append(await self._send_heartbeat(frame))
         elif frame.command == "MESSAGE":
 
             subscription = frame.headers["subscription"]
@@ -111,7 +111,7 @@ class AsyncWsClient:
 
                 _results.append(self._loop.create_task(sub.receive(frame)))
             else:
-                info = "Unhandled received MESSAGE: " + str(frame)
+                info = f"Unhandled received MESSAGE: {str(frame)}"
                 log.debug(info)
                 _results.append(info)
         elif frame.command == "RECEIPT":
@@ -122,7 +122,7 @@ class AsyncWsClient:
         elif frame.command == "PONG":
             pass
         else:
-            info = "Unhandled received MESSAGE: " + frame.command
+            info = f"Unhandled received MESSAGE: {frame.command}"
             log.debug(info)
             _results.append(info)
 
@@ -169,11 +169,11 @@ class AsyncWsClient:
         **kwargs,
     ):
         if self.connected:
-            log.debug("Already connected to " + self.url)
+            log.debug(f"Already connected to {self.url}")
             return
 
         if self._connecting:
-            log.debug("Already connecting to " + self.url)
+            log.debug(f"Already connecting to {self.url}")
             return
 
         try:
@@ -201,8 +201,7 @@ class AsyncWsClient:
                 elapsed += 1
                 if timeout > 0 and elapsed > timeout:
                     raise Exception("Connection timeout")
-        # await self._start_heartbeat()
-        except (websockets.exceptions.WebSocketException,):
+        except websockets.exceptions.WebSocketException:
             await self._on_close(self.ws)
         except Exception as e:
             await self._on_error(self.ws, e)
@@ -212,7 +211,7 @@ class AsyncWsClient:
             async for message in self.ws:
                 await self._on_message(self.ws, message)
             await self._on_close(self.ws)
-        except (websockets.exceptions.WebSocketException,):
+        except websockets.exceptions.WebSocketException:
             await self._on_close(self.ws)
         except Exception as e:
             await self._on_error(self.ws, e)
@@ -237,7 +236,7 @@ class AsyncWsClient:
             # self.ws = None
             self.tasks = []
         except Exception as e:
-            log.debug("Error cleaning up: " + str(e))
+            log.debug(f"Error cleaning up: {str(e)}")
 
     async def send(self, destination, headers=None, body=None):
         headers = self._set_default_headers(headers)
@@ -249,7 +248,7 @@ class AsyncWsClient:
     async def subscribe(self, destination, callback=None, headers=None):
         headers = self._set_default_headers(headers)
         if "id" not in headers or headers["id"] is None or headers["id"] == "":
-            id = "sub-" + str(self.counter)
+            id = f"sub-{str(self.counter)}"
             self.counter += 1
         else:
             id = headers["id"]

@@ -36,7 +36,7 @@ app = BotApp(
 async def buttons_handler(ctx: BotContext[CommandEvent]):
     try:
         m = await ctx.bot.prepare_response_message(ctx.event.message)
-        m.message = f"Please select an option:"
+        m.message = "Please select an option:"
 
         inline_keyboard = [
             [

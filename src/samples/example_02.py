@@ -76,8 +76,7 @@ async def buttons_handler(ctx: BotContext[CommandEvent]):
         color=InlineKeyboardColor.RED,
         size=InlineKeyboardSize.DEFAULT,
     )
-    await ctx.event.message.reply_text(f"Please select an option:",
-                                       inline_markup)
+    await ctx.event.message.reply_text("Please select an option:", inline_markup)
 
 
 @app.on_command("test")
@@ -90,7 +89,7 @@ async def test_handler(ctx: BotContext[CommandEvent]):
 @app.on_command("buttonfull")
 async def buttons_handler(ctx: BotContext[CommandEvent]):
     m = await ctx.bot.prepare_response_message(ctx.event.message)
-    m.message = f"Please select an option:"
+    m.message = "Please select an option:"
 
     inline_keyboard1 = [
         [
@@ -130,7 +129,7 @@ async def buttons_handler(ctx: BotContext[CommandEvent]):
 @app.on_command("echo")
 async def buttons_handler(ctx: BotContext[CommandEvent]):
     m = await ctx.bot.prepare_response_message(ctx.event.message)
-    m.message = f"Please select an option:"
+    m.message = "Please select an option:"
 
     inline_keyboard2 = [
         [
@@ -173,7 +172,7 @@ async def query_callback_handler(ctx: BotContext[CallbackQueryEvent]):
 
 @app.on_callback_query(regexp(r"back"))
 async def callback_query_handler(ctx: BotContext[CallbackQueryEvent]):
-    await ctx.event.message.edit_text(f"thanks selected!")
+    await ctx.event.message.edit_text("thanks selected!")
 
 
 @app.on_message()
@@ -184,7 +183,7 @@ async def message_handler(ctx: BotContext[MessageEvent]):
 
 @app.on_community_update()
 async def community_update_handler(ctx: BotContext[CommunityUpdatedEvent]):
-    print(ctx.event.community_id + " was updated")
+    print(f"{ctx.event.community_id} was updated")
 
 
 app.run()

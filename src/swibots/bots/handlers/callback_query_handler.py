@@ -8,9 +8,6 @@ from swibots.utils.types import SCT, HandlerCallback
 from swibots.bots.handlers.event_handler import EventHandler
 from swibots.bots.bot_context import BotContext
 
-if TYPE_CHECKING:
-    pass
-
 ResType = TypeVar("ResType")
 
 

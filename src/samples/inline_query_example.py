@@ -53,18 +53,19 @@ async def on_inline_query(ctx: BotContext[InlineQueryEvent]):
     response = parse_response(await restclient.get(url))
     if response.status_code == 200:
         data = response.data
-        results = []
-        for i in range(len(data[1])):
-            results.append(
-                InlineQueryResultArticle(
-                    id=str(i),
-                    title=data[1][i],
-                    description=data[1][i],
-                    input_message=InputMessageContent(data[2][i]),
-                    article_url=data[3][i],
-                    thumb_url="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/1200px-Wikipedia-logo-v2.svg.png",
-                    thumb_width=48,
-                    thumb_height=48))
+        results = [
+            InlineQueryResultArticle(
+                id=str(i),
+                title=data[1][i],
+                description=data[1][i],
+                input_message=InputMessageContent(data[2][i]),
+                article_url=data[3][i],
+                thumb_url="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/1200px-Wikipedia-logo-v2.svg.png",
+                thumb_width=48,
+                thumb_height=48,
+            )
+            for i in range(len(data[1]))
+        ]
         await query.answer(results)
     else:
         await query.answer("There was an error while searching for results.")

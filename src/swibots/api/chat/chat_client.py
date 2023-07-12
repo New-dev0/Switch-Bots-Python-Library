@@ -94,11 +94,10 @@ class ChatClient(SwitchRestClient):
 
         This is a shortcut for :meth:`subscribe` with the endpoint set to ``/chat/queue/events``
         """
-        subscription = await self.ws.subscribe(
+        return await self.ws.subscribe(
             "/chat/queue/events",
             callback=lambda event: callback(self._parse_event(event)),
         )
-        return subscription
 
     def _parse_event(self, raw_message: WsMessage) -> ChatEvent:
         try:
@@ -106,20 +105,19 @@ class ChatClient(SwitchRestClient):
             type = json_data.get("type", "MESSAGE")
             evt: ChatEvent = None
             if type == EventType.MESSAGE.value:
-                evt = self.build_object(MessageEvent, json_data)
-                # evt = MessageEvent.build_from_json(json_data)
+                return self.build_object(MessageEvent, json_data)
+                        # evt = MessageEvent.build_from_json(json_data)
             elif type == EventType.COMMAND.value:
-                evt = self.build_object(CommandEvent, json_data)
-                # evt = CommandEvent.build_from_json(json_data)
+                return self.build_object(CommandEvent, json_data)
+                        # evt = CommandEvent.build_from_json(json_data)
             elif type == EventType.CALLBACK_QUERY.value:
-                evt = self.build_object(CallbackQueryEvent, json_data)
-                # evt = CallbackQueryEvent.build_from_json(json_data)
+                return self.build_object(CallbackQueryEvent, json_data)
+                        # evt = CallbackQueryEvent.build_from_json(json_data)
             elif type == EventType.INLINE_QUERY.value:
-                evt = self.build_object(InlineQueryEvent, json_data)
+                return self.build_object(InlineQueryEvent, json_data)
             else:
-                evt = self.build_object(ChatEvent, json_data)
-                # evt = ChatEvent.build_from_json(json_data)
-            return evt
+                return self.build_object(ChatEvent, json_data)
+                        # evt = ChatEvent.build_from_json(json_data)
         except Exception as e:
             logger.exception(e)
 

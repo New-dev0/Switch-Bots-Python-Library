@@ -46,7 +46,7 @@ app = BotApp(
 @app.on_command("buttons")
 async def buttons_handler(ctx: BotContext[CommandEvent]):
     m = await ctx.bot.prepare_response_message(ctx.event.message)
-    m.message = f"Please select an option:"
+    m.message = "Please select an option:"
 
     inline_keyboard = [
         [
@@ -94,7 +94,7 @@ async def test_handler(ctx: BotContext[CommandEvent]):
 @app.on_command("buttonfull")
 async def buttons_handler(ctx: BotContext[CommandEvent]):
     m = await ctx.bot.prepare_response_message(ctx.event.message)
-    m.message = f"Please select an option:"
+    m.message = "Please select an option:"
 
     inline_keyboard1 = [
 
@@ -135,7 +135,7 @@ async def buttons_handler(ctx: BotContext[CommandEvent]):
 @app.on_command("echo")
 async def buttons_handler(ctx: BotContext[CommandEvent]):
     m = await ctx.bot.prepare_response_message(ctx.event.message)
-    m.message = f"Please select an option:"
+    m.message = "Please select an option:"
 
     inline_keyboard1 = [
         [
@@ -186,7 +186,7 @@ async def handle_download_progress(progress: DownloadProgress):
 
 @app.on_community_update()
 async def community_update_handler(ctx: BotContext[CommunityUpdatedEvent]):
-    print(ctx.event.community_id + " was updated")
+    print(f"{ctx.event.community_id} was updated")
 
 # app.run()
 

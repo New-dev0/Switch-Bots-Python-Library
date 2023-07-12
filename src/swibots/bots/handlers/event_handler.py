@@ -10,9 +10,6 @@ from swibots.bots.bot_context import BotContext
 from swibots.api.chat.events import CommandEvent
 from swibots.api.common.events import Event
 
-if TYPE_CHECKING:
-    pass
-
 ResType = TypeVar("ResType")
 
 
@@ -33,8 +30,9 @@ class EventHandler(BaseHandler):
         self.filter = filter
 
     async def should_handle(self, context: BotContext[Event]) -> bool:
-        if (self.event_types is not None) and (not context.event.type in self.event_types):
+        if (
+            self.event_types is not None
+            and context.event.type not in self.event_types
+        ):
             return False
-        if self.filter:
-            return await self.filter(context)
-        return True
+        return await self.filter(context) if self.filter else True

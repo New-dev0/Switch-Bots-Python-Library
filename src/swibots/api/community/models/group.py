@@ -54,19 +54,19 @@ class Group(SwitchObject):
         }
 
     @classmethod
-    def from_json(self, data: JSONDict) -> "Group":
+    def from_json(cls, data: JSONDict) -> "Group":
         if data is not None:
-            self.id = data.get("groupId")
-            self.name = data.get("groupName")
-            self.community_id = data.get("communityId")
-            self.enabled_free = data.get("enabledFree")
-            self.enabled_public = data.get("enabledPublic")
-            self.default_group = data.get("defaultGroup")
-            self.is_public = data.get("isPublic")
-            self.created_by = data.get("createdBy")
-            self.icon = data.get("icon")
-            self.group_logo_url = data.get("groupLogoUrl")
-            self.allowed_content = data.get("allowedContent")
-            self.created_at = data.get("createdAt")
-            self.updated_at = data.get("updatedAt")
-        return self
+            cls.id = data.get("groupId")
+            cls.name = data.get("groupName")
+            cls.community_id = data.get("communityId")
+            cls.enabled_free = data.get("enabledFree")
+            cls.enabled_public = data.get("enabledPublic")
+            cls.default_group = data.get("defaultGroup")
+            cls.is_public = data.get("isPublic")
+            cls.created_by = data.get("createdBy")
+            cls.icon = data.get("icon")
+            cls.group_logo_url = data.get("groupLogoUrl")
+            cls.allowed_content = data.get("allowedContent")
+            cls.created_at = data.get("createdAt")
+            cls.updated_at = data.get("updatedAt")
+        return cls

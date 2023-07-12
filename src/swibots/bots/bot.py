@@ -27,34 +27,33 @@ class Bot(AuthUser, ApiClient):
         self._bot_client = value.bots_service
 
     async def on_app_start(self, app: "BotApp"):
-        if app.auto_update_bot:
-            """Called when app start
+        if not app.auto_update_bot:
+            return
+        """Called when app start
             This method registers the bot commands and updates the bot info
             """
-            # get all app commands
-            commands = self.app._register_commands or []
-            description = self.app._bot_description or ""
-            # register the commands
-            self._info = BotInfo(description=description, id=self.id)
-            for command in commands:
-                command_name = command.command
-                if isinstance(command_name, str):
-                    command_names = command_name.split(",")
-                else:
-                    command_names = command_name
+        # get all app commands
+        commands = self.app._register_commands or []
+        description = self.app._bot_description or ""
+        # register the commands
+        self._info = BotInfo(description=description, id=self.id)
+        for command in commands:
+            command_name = command.command
+            if isinstance(command_name, str):
+                command_names = command_name.split(",")
+            else:
+                command_names = command_name
 
-                for c_name in command_names:
-                    self.info.commands.append(
-                        BotCommandInfo(
-                            command=c_name,
-                            description=command.description,
-                            channel=command.channel,
-                        )
+            for c_name in command_names:
+                self.info.commands.append(
+                    BotCommandInfo(
+                        command=c_name,
+                        description=command.description,
+                        channel=command.channel,
                     )
+                )
 
-            self.info = await self.update_bot_info(self.info)
-
-        pass
+        self.info = await self.update_bot_info(self.info)
 
     @property
     def info(self) -> BotInfo:

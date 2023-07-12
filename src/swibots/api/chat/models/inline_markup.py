@@ -30,7 +30,7 @@ class InlineMarkup(SwitchObject):
         return self._inline_keyboard
 
     def add_row(self, buttons: List["InlineKeyboardButton"]):
-        if len(buttons) > 0:
+        if buttons:
             self.inline_keyboard.append(list(buttons))
 
     def to_json(self) -> JSONDict | None:

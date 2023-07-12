@@ -63,50 +63,47 @@ class CommunityClient(SwitchRestClient):
         return await self.ws.subscribe(endpoint, callback=callback)
 
     async def subscribe_to_notifications(self, callback=None) -> AsyncWsSubscription:
-        subscription = await self.ws.subscribe(
+        return await self.ws.subscribe(
             "/user/queue/events",
             callback=lambda event: callback(self._parse_event(event)),
         )
-        return subscription
 
     def _parse_event(self, raw_message: WsMessage) -> CommunityEvent:
         json_data = json.loads(raw_message.body)
         type = json_data.get("type", "COMMUNITY")
         evt = None
         if type == EventType.COMMUNITY_CHANNEL_CREATE.value:
-            evt = self.build_object(ChannelCreatedEvent, json_data)
-            # return ChannelCreatedEvent.build_from_json(json_data)
+            return self.build_object(ChannelCreatedEvent, json_data)
+                # return ChannelCreatedEvent.build_from_json(json_data)
         elif type == EventType.COMMUNITY_CHANNEL_UPDATE.value:
-            evt = self.build_object(ChannelUpdatedEvent, json_data)
-            # return ChannelUpdatedEvent.build_from_json(json_data)
+            return self.build_object(ChannelUpdatedEvent, json_data)
+                # return ChannelUpdatedEvent.build_from_json(json_data)
         elif type == EventType.COMMUNITY_CHANNEL_DELETE.value:
-            evt = self.build_object(ChannelDeletedEvent, json_data)
-            # return ChannelDeletedEvent.build_from_json(json_data)
+            return self.build_object(ChannelDeletedEvent, json_data)
+                # return ChannelDeletedEvent.build_from_json(json_data)
         elif type == EventType.COMMUNITY_UPDATE.value:
-            evt = self.build_object(CommunityUpdatedEvent, json_data)
-            # return CommunityUpdatedEvent.build_from_json(json_data)
+            return self.build_object(CommunityUpdatedEvent, json_data)
+                # return CommunityUpdatedEvent.build_from_json(json_data)
         elif type == EventType.COMMUNITY_GROUP_CREATE.value:
-            evt = self.build_object(GroupCreatedEvent, json_data)
-            # return GroupCreatedEvent.build_from_json(json_data)
+            return self.build_object(GroupCreatedEvent, json_data)
+                # return GroupCreatedEvent.build_from_json(json_data)
         elif type == EventType.COMMUNITY_GROUP_UPDATE.value:
-            evt = self.build_object(GroupUpdatedEvent, json_data)
-            # return GroupUpdatedEvent.build_from_json(json_data)
+            return self.build_object(GroupUpdatedEvent, json_data)
+                # return GroupUpdatedEvent.build_from_json(json_data)
         elif type == EventType.COMMUNITY_GROUP_DELETE.value:
-            evt = self.build_object(GroupDeletedEvent, json_data)
-            # return GroupDeletedEvent.build_from_json(json_data)
+            return self.build_object(GroupDeletedEvent, json_data)
+                # return GroupDeletedEvent.build_from_json(json_data)
         elif type == EventType.COMMUNITY_USER_BAN.value:
-            evt = self.build_object(UserBannedEvent, json_data)
-            # return UserBannedEvent.build_from_json(json_data)
+            return self.build_object(UserBannedEvent, json_data)
+                # return UserBannedEvent.build_from_json(json_data)
         elif type == EventType.COMMUNITY_MEMBER_JOIN.value:
-            evt = self.build_object(MemberJoinedEvent, json_data)
-            # return MemberJoinedEvent.build_from_json(json_data)
+            return self.build_object(MemberJoinedEvent, json_data)
+                # return MemberJoinedEvent.build_from_json(json_data)
         elif type == EventType.COMMUNITY_MEMBER_LEAVE.value:
-            evt = self.build_object(MemberLeftEvent, json_data)
-            # return MemberLeftEvent.build_from_json(json_data)
+            return self.build_object(MemberLeftEvent, json_data)
+                # return MemberLeftEvent.build_from_json(json_data)
         else:
-            evt = self.build_object(CommunityEvent, json_data)
-
-        return evt
+            return self.build_object(CommunityEvent, json_data)
 
     async def start(self):
         """Start the community client"""
